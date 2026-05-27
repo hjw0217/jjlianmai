@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 === */
+      --color-primary:              #5B6CFF;
+      --color-primary-container:    #E0E3FF;
+      --color-on-primary:           #FFFFFF;
+      /* === 背景 / 表面 === */
+      --color-background:                 #F7F8FF;
+      --color-surface-container-lowest:   #F0F1FB;
+      --color-surface:                    #FFFFFF;
+      --color-surface-container:          #E8E9F8;
+      --color-surface-container-high:     #DEE0F4;
+      --color-surface-container-highest:  #D3D5EE;
+      /* === 文字 === */
+      --color-on-surface:           #1F2433;
+      --color-on-surface-variant:   #6B7294;
+      /* === 功能色 === */
+      --color-success:  #55C59D;
+      --color-error:    #EF4444;
+      --color-warning:  #FFD166;
+      /* === 边框 === */
+      --color-outline:          #C8CBE0;
+      --color-outline-variant:  #DDDFF0;
+      /* === 强调色 === */
+      --color-accent-yellow:  #FFD166;
+      --color-accent-pink:    #FF7AB6;
+      --color-accent-green:   #55C59D;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.08);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.10);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.15);
+      /* === 字体 === */
+      --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start -->
+  <header class="bg-surface sticky top-0 z-40 h-16 flex items-center justify-between px-6 shadow-card">
+    <div class="max-w-6xl mx-auto w-full flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="graduation-cap" class="text-primary w-6 h-6"></i>
+        <span class="font-bold text-lg text-on-surface">课程预约</span>
+      </div>
+      <nav class="flex items-center gap-1">
+        <a href="home.html" class="px-3 py-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">首页</a>
+        <a href="booking.html" class="px-3 py-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">预约试听</a>
+        <a href="admin.html" class="px-3 py-1.5 text-sm font-medium text-primary bg-primary/10 rounded-md" aria-current="page">管理后台</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-semibold">初</div>
+      </div>
+    </div>
+  </header>
+  <!-- @nav:end -->
+
+  <main class="max-w-6xl mx-auto px-6 py-8">
+    <!-- @main-content:start -->
+
+    <!-- 页面顶部：标题 + 管理员信息 -->
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-bold text-on-surface">预约时段管理</h1>
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-on-surface-variant">小初</span>
+        <div class="w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-semibold">初</div>
+        <button id="btn-logout" class="bg-surface-container text-on-surface px-3 py-1.5 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>退出登录
+        </button>
+      </div>
+    </div>
+
+    <!-- 统计卡片区（3列） -->
+    <div class="grid grid-cols-3 gap-5 mb-8">
+      <!-- 卡片-今日预约数 -->
+      <div class="bg-surface rounded-lg shadow-card p-5 flex items-center gap-4">
+        <div class="w-11 h-11 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+          <i data-lucide="calendar-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-on-surface">12</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">今日预约数</div>
+        </div>
+      </div>
+      <!-- 卡片-可用时段数 -->
+      <div class="bg-surface rounded-lg shadow-card p-5 flex items-center gap-4">
+        <div class="w-11 h-11 bg-accent-green/10 text-accent-green rounded-lg flex items-center justify-center">
+          <i data-lucide="clock" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-on-surface">28</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">可用时段数</div>
+        </div>
+      </div>
+      <!-- 卡片-本周试听 -->
+      <div class="bg-surface rounded-lg shadow-card p-5 flex items-center gap-4">
+        <div class="w-11 h-11 bg-accent-yellow/15 text-accent-yellow rounded-lg flex items-center justify-center">
+          <i data-lucide="headphones" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-on-surface">45</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">本周试听</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 区 -->
+    <div class="mb-6 flex items-center gap-1 border-b border-outline-variant/20 pb-0">
+      <button id="tab-slot" class="px-4 py-2.5 text-sm font-medium text-primary border-b-2 border-primary transition-colors" aria-current="page">时段管理</button>
+      <button id="tab-booking" class="px-4 py-2.5 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors">预约列表</button>
+    </div>
+
+    <!-- 时段管理 Tab 内容 -->
+    <div id="panel-slot">
+      <!-- 筛选栏 -->
+      <div class="flex items-center gap-3 mb-5">
+        <select id="filter-course" class="bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+          <option value="">全部课程</option>
+          <option value="piano">钢琴课</option>
+          <option value="guitar">吉他课</option>
+          <option value="violin">小提琴课</option>
+          <option value="drums">架子鼓课</option>
+          <option value="vocal">声乐课</option>
+        </select>
+        <select id="filter-teacher" class="bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+          <option value="">全部讲师</option>
+          <option value="zhang">张老师</option>
+          <option value="li">李老师</option>
+          <option value="wang">王老师</option>
+          <option value="zhao">赵老师</option>
+        </select>
+        <input id="filter-date-start" type="date" class="bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+        <span class="text-sm text-on-surface-variant">至</span>
+        <input id="filter-date-end" type="date" class="bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+        <div class="flex-1"></div>
+        <button id="btn-add-slot" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>新增时段
+        </button>
+      </div>
+
+      <!-- 时段列表表格 -->
+      <div class="bg-surface rounded-lg border border-outline-variant/20 overflow-hidden">
+        <!-- 表头 -->
+        <div class="grid grid-cols-7 px-4 py-3 bg-surface-container text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
+          <span>日期</span>
+          <span>时间段</span>
+          <span>课程</span>
+          <span>讲师</span>
+          <span>教室</span>
+          <span>状态</span>
+          <span>操作</span>
+        </div>
+        <div class="divide-y divide-outline-variant/20">
+          <!-- 列表-时段1 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-20</span>
+            <span class="text-sm text-on-surface-variant">09:00 - 10:00</span>
+            <span class="text-sm text-on-surface">钢琴课</span>
+            <span class="text-sm text-on-surface-variant">张老师</span>
+            <span class="text-sm text-on-surface-variant">A301</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/15 text-accent-green w-fit">可用</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="1">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="1">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段2 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-20</span>
+            <span class="text-sm text-on-surface-variant">10:30 - 11:30</span>
+            <span class="text-sm text-on-surface">吉他课</span>
+            <span class="text-sm text-on-surface-variant">李老师</span>
+            <span class="text-sm text-on-surface-variant">B205</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-primary/15 text-primary w-fit">已预约</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="2">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="2">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段3 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-20</span>
+            <span class="text-sm text-on-surface-variant">14:00 - 15:00</span>
+            <span class="text-sm text-on-surface">小提琴课</span>
+            <span class="text-sm text-on-surface-variant">王老师</span>
+            <span class="text-sm text-on-surface-variant">C102</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/15 text-accent-green w-fit">可用</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="3">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="3">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段4 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-19</span>
+            <span class="text-sm text-on-surface-variant">09:00 - 10:00</span>
+            <span class="text-sm text-on-surface">架子鼓课</span>
+            <span class="text-sm text-on-surface-variant">赵老师</span>
+            <span class="text-sm text-on-surface-variant">D401</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-on-surface-variant/15 text-on-surface-variant w-fit">已过期</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="4">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="4">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段5 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-21</span>
+            <span class="text-sm text-on-surface-variant">15:30 - 16:30</span>
+            <span class="text-sm text-on-surface">声乐课</span>
+            <span class="text-sm text-on-surface-variant">张老师</span>
+            <span class="text-sm text-on-surface-variant">A301</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-primary/15 text-primary w-fit">已预约</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="5">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="5">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段6 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-22</span>
+            <span class="text-sm text-on-surface-variant">10:00 - 11:00</span>
+            <span class="text-sm text-on-surface">钢琴课</span>
+            <span class="text-sm text-on-surface-variant">李老师</span>
+            <span class="text-sm text-on-surface-variant">B205</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/15 text-accent-green w-fit">可用</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="6">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="6">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段7 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-18</span>
+            <span class="text-sm text-on-surface-variant">14:00 - 15:00</span>
+            <span class="text-sm text-on-surface">吉他课</span>
+            <span class="text-sm text-on-surface-variant">王老师</span>
+            <span class="text-sm text-on-surface-variant">C102</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-on-surface-variant/15 text-on-surface-variant w-fit">已过期</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="7">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="7">删除</button>
+            </div>
+          </div>
+          <!-- 列表-时段8 -->
+          <div class="grid grid-cols-7 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">2025-01-23</span>
+            <span class="text-sm text-on-surface-variant">16:00 - 17:00</span>
+            <span class="text-sm text-on-surface">小提琴课</span>
+            <span class="text-sm text-on-surface-variant">赵老师</span>
+            <span class="text-sm text-on-surface-variant">D401</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/15 text-accent-green w-fit">可用</span>
+            <div class="flex gap-3">
+              <button class="btn-edit-slot text-primary text-sm font-medium hover:underline" data-id="8">编辑</button>
+              <button class="btn-delete-slot text-error text-sm font-medium hover:underline" data-id="8">删除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 预约列表 Tab 内容（默认隐藏） -->
+    <div id="panel-booking" class="hidden">
+      <!-- 预约记录表格 -->
+      <div class="bg-surface rounded-lg border border-outline-variant/20 overflow-hidden">
+        <!-- 表头 -->
+        <div class="grid grid-cols-6 px-4 py-3 bg-surface-container text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
+          <span>预约编号</span>
+          <span>学员姓名</span>
+          <span>课程</span>
+          <span>预约时间</span>
+          <span>状态</span>
+          <span>操作</span>
+        </div>
+        <div class="divide-y divide-outline-variant/20">
+          <!-- 列表-预约1 -->
+          <div class="grid grid-cols-6 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">BK2025012001</span>
+            <span class="text-sm text-on-surface">刘思远</span>
+            <span class="text-sm text-on-surface-variant">吉他课</span>
+            <span class="text-sm text-on-surface-variant">2025-01-20 10:30</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/15 text-accent-green w-fit">已确认</span>
+            <div class="flex gap-3">
+              <button class="btn-view-booking text-primary text-sm font-medium hover:underline" data-id="BK2025012001">查看</button>
+              <button class="btn-cancel-booking text-error text-sm font-medium hover:underline" data-id="BK2025012001">取消</button>
+            </div>
+          </div>
+          <!-- 列表-预约2 -->
+          <div class="grid grid-cols-6 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">BK2025012002</span>
+            <span class="text-sm text-on-surface">陈雨涵</span>
+            <span class="text-sm text-on-surface-variant">声乐课</span>
+            <span class="text-sm text-on-surface-variant">2025-01-21 15:30</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-yellow/20 text-accent-yellow w-fit">待确认</span>
+            <div class="flex gap-3">
+              <button class="btn-view-booking text-primary text-sm font-medium hover:underline" data-id="BK2025012002">查看</button>
+              <button class="btn-cancel-booking text-error text-sm font-medium hover:underline" data-id="BK2025012002">取消</button>
+            </div>
+          </div>
+          <!-- 列表-预约3 -->
+          <div class="grid grid-cols-6 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">BK2025011901</span>
+            <span class="text-sm text-on-surface">孙明轩</span>
+            <span class="text-sm text-on-surface-variant">钢琴课</span>
+            <span class="text-sm text-on-surface-variant">2025-01-19 09:00</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error w-fit">已取消</span>
+            <div class="flex gap-3">
+              <button class="btn-view-booking text-primary text-sm font-medium hover:underline" data-id="BK2025011901">查看</button>
+              <button class="btn-cancel-booking text-error text-sm font-medium hover:underline opacity-40 pointer-events-none" data-id="BK2025011901">取消</button>
+            </div>
+          </div>
+          <!-- 列表-预约4 -->
+          <div class="grid grid-cols-6 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">BK2025012101</span>
+            <span class="text-sm text-on-surface">周子墨</span>
+            <span class="text-sm text-on-surface-variant">小提琴课</span>
+            <span class="text-sm text-on-surface-variant">2025-01-22 10:00</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/15 text-accent-green w-fit">已确认</span>
+            <div class="flex gap-3">
+              <button class="btn-view-booking text-primary text-sm font-medium hover:underline" data-id="BK2025012101">查看</button>
+              <button class="btn-cancel-booking text-error text-sm font-medium hover:underline" data-id="BK2025012101">取消</button>
+            </div>
+          </div>
+          <!-- 列表-预约5 -->
+          <div class="grid grid-cols-6 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">BK2025012201</span>
+            <span class="text-sm text-on-surface">林悦然</span>
+            <span class="text-sm text-on-surface-variant">架子鼓课</span>
+            <span class="text-sm text-on-surface-variant">2025-01-23 16:00</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-yellow/20 text-accent-yellow w-fit">待确认</span>
+            <div class="flex gap-3">
+              <button class="btn-view-booking text-primary text-sm font-medium hover:underline" data-id="BK2025012201">查看</button>
+              <button class="btn-cancel-booking text-error text-sm font-medium hover:underline" data-id="BK2025012201">取消</button>
+            </div>
+          </div>
+          <!-- 列表-预约6 -->
+          <div class="grid grid-cols-6 px-4 py-3 hover:bg-surface-container/50 transition-colors items-center">
+            <span class="text-sm font-medium text-on-surface">BK2025011801</span>
+            <span class="text-sm text-on-surface">吴佳琪</span>
+            <span class="text-sm text-on-surface-variant">吉他课</span>
+            <span class="text-sm text-on-surface-variant">2025-01-18 14:00</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-error/15 text-error w-fit">已取消</span>
+            <div class="flex gap-3">
+              <button class="btn-view-booking text-primary text-sm font-medium hover:underline" data-id="BK2025011801">查看</button>
+              <button class="btn-cancel-booking text-error text-sm font-medium hover:underline opacity-40 pointer-events-none" data-id="BK2025011801">取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- @main-content:end -->
+  </main>
+
+  <!-- 新增/编辑时段模态框 -->
+  <div id="modal-slot" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-surface rounded-xl shadow-dialog max-w-md w-full max-h-[90vh] overflow-y-auto p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 id="modal-slot-title" class="text-base font-semibold text-on-surface">新增时段</h2>
+        <button id="btn-close-modal" class="text-on-surface-variant hover:text-on-surface transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">日期</label>
+          <input id="field-date" type="date" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1.5">开始时间</label>
+            <input id="field-start" type="time" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1.5">结束时间</label>
+            <input id="field-end" type="time" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">课程</label>
+          <select id="field-course" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            <option value="">请选择课程</option>
+            <option value="piano">钢琴课</option>
+            <option value="guitar">吉他课</option>
+            <option value="violin">小提琴课</option>
+            <option value="drums">架子鼓课</option>
+            <option value="vocal">声乐课</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">讲师</label>
+          <select id="field-teacher" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            <option value="">请选择讲师</option>
+            <option value="zhang">张老师</option>
+            <option value="li">李老师</option>
+            <option value="wang">王老师</option>
+            <option value="zhao">赵老师</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">教室</label>
+          <select id="field-room" class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors">
+            <option value="">请选择教室</option>
+            <option value="A301">A301</option>
+            <option value="B205">B205</option>
+            <option value="C102">C102</option>
+            <option value="D401">D401</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button id="btn-cancel-modal" class="bg-surface-container text-on-surface px-4 py-2 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all">取消</button>
+        <button id="btn-save-modal" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(function () {
+
+      // === Tab 切换 ===
+      $('#tab-slot').on('click', function () {
+        $(this).addClass('text-primary border-primary').removeClass('text-on-surface-variant border-transparent').attr('aria-current', 'page');
+        $('#tab-booking').addClass('text-on-surface-variant border-transparent').removeClass('text-primary border-primary').removeAttr('aria-current');
+        $('#panel-slot').removeClass('hidden');
+        $('#panel-booking').addClass('hidden');
+      });
+
+      $('#tab-booking').on('click', function () {
+        $(this).addClass('text-primary border-primary').removeClass('text-on-surface-variant border-transparent').attr('aria-current', 'page');
+        $('#tab-slot').addClass('text-on-surface-variant border-transparent').removeClass('text-primary border-primary').removeAttr('aria-current');
+        $('#panel-booking').removeClass('hidden');
+        $('#panel-slot').addClass('hidden');
+      });
+
+      // === 模态框：新增时段 ===
+      $('#btn-add-slot').on('click', function () {
+        $('#modal-slot-title').text('新增时段');
+        // 清空表单字段
+        $('#field-date').val('');
+        $('#field-start').val('');
+        $('#field-end').val('');
+        $('#field-course').val('');
+        $('#field-teacher').val('');
+        $('#field-room').val('');
+        $('#modal-slot').removeClass('hidden');
+      });
+
+      // === 模态框：编辑时段 ===
+      // 编辑按钮 - 点击后应实现编辑时段：
+      // 1. 将模态框标题改为"编辑时段"
+      // 2. 从对应行中读取当前数据填充到表单字段（日期、开始时间、结束时间、课程、讲师、教室）
+      // 3. 用户修改后点击保存，更新对应行的数据
+      // 4. 当前实现：打开模态框并设置为编辑模式
+      $('#panel-slot').on('click', '.btn-edit-slot', function () {
+        var row = $(this).closest('.grid');
+        var date = row.find('span:eq(0)').text();
+        var timeRange = row.find('span:eq(1)').text();
+        var times = timeRange.split(' - ');
+        var course = row.find('span:eq(2)').text();
+        var teacher = row.find('span:eq(3)').text();
+        var room = row.find('span:eq(4)').text();
+
+        $('#modal-slot-title').text('编辑时段');
+        $('#field-date').val(date);
+        $('#field-start').val(times[0] ? times[0].trim() : '');
+        $('#field-end').val(times[1] ? times[1].trim() : '');
+        // 下拉框根据文本匹配设置值
+        $('#field-course option').filter(function () { return $(this).text() === course; }).prop('selected', true);
+        $('#field-teacher option').filter(function () { return $(this).text() === teacher; }).prop('selected', true);
+        $('#field-room option').filter(function () { return $(this).text() === room; }).prop('selected', true);
+        $('#modal-slot').removeClass('hidden');
+      });
+
+      // === 关闭模态框 ===
+      $('#btn-close-modal').on('click', function () {
+        $('#modal-slot').addClass('hidden');
+      });
+
+      $('#btn-cancel-modal').on('click', function () {
+        $('#modal-slot').addClass('hidden');
+      });
+
+      // 点击遮罩关闭
+      $('#modal-slot').on('click', function (e) {
+        if ($(e.target).is('#modal-slot')) {
+          $(this).addClass('hidden');
+        }
+      });
+
+      // === 保存时段 ===
+      // 保存按钮 - 点击后应实现保存时段：
+      // 1. 校验所有必填字段（日期、时间、课程、讲师、教室）
+      // 2. 如果是"新增"模式，在表格末尾插入新行
+      // 3. 如果是"编辑"模式，更新对应行的数据
+      // 4. 关闭模态框并显示成功提示
+      // 当前实现：关闭模态框
+      $('#btn-save-modal').on('click', function () {
+        // 简单校验
+        var date = $('#field-date').val();
+        var start = $('#field-start').val();
+        var end = $('#field-end').val();
+        var course = $('#field-course').val();
+        var teacher = $('#field-teacher').val();
+        var room = $('#field-room').val();
+
+        if (!date || !start || !end || !course || !teacher || !room) {
+          alert('请填写所有必填字段');
+          return;
+        }
+
+        $('#modal-slot').addClass('hidden');
+        console.log('保存时段:', { date: date, start: start, end: end, course: course, teacher: teacher, room: room });
+      });
+
+      // === 删除时段 ===
+      $('#panel-slot').on('click', '.btn-delete-slot', function () {
+        var row = $(this).closest('.grid');
+        if (confirm('确定要删除此时段吗？')) {
+          row.remove();
+        }
+      });
+
+      // === 预约列表：查看 ===
+      // 查看按钮 - 点击后应实现查看预约详情：
+      // 1. 跳转到预约详情页，或弹出详情模态框
+      // 2. 显示预约编号、学员信息、课程信息、预约时间、状态等完整信息
+      $('#panel-booking').on('click', '.btn-view-booking', function () {
+        var bookingId = $(this).data('id');
+        console.log('查看预约详情:', bookingId);
+      });
+
+      // === 预约列表：取消 ===
+      $('#panel-booking').on('click', '.btn-cancel-booking', function () {
+        if ($(this).hasClass('pointer-events-none')) return;
+        var row = $(this).closest('.grid');
+        var bookingId = $(this).data('id');
+        if (confirm('确定要取消此预约吗？')) {
+          // 将状态改为已取消
+          var statusSpan = row.find('span').filter(function () {
+            return $(this).hasClass('inline-flex');
+          });
+          statusSpan.removeClass('bg-accent-green/15 text-accent-green bg-accent-yellow/20 text-accent-yellow').addClass('bg-error/15 text-error').text('已取消');
+          // 禁用取消按钮
+          $(this).addClass('opacity-40 pointer-events-none');
+        }
+      });
+
+      // === 退出登录 ===
+      $('#btn-logout').on('click', function () {
+        if (confirm('确定要退出登录吗？')) {
+          window.location.href = 'admin-login.html';
+        }
+      });
+
+    });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

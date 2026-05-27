@@ -1,0 +1,13 @@
+[project]
+requires = [ "nodejs-24" ]
+template = "nextjs"
+version = "0.0.21"
+appliedPatches = [ ]
+
+[dev]
+build = [ "pnpm", "install" ]
+run = [ "pnpm", "run", "dev" ]
+
+[deploy]
+build = [ "pnpm", "run", "build" ]
+run = [ "pnpm", "run", "start" ]

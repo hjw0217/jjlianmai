@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 === */
+      --color-primary:              #5B6CFF;
+      --color-primary-container:    #E0E3FF;
+      --color-on-primary:           #FFFFFF;
+      /* === 背景 / 表面 === */
+      --color-background:                 #F7F8FF;
+      --color-surface-container-lowest:   #F0F1FB;
+      --color-surface:                    #FFFFFF;
+      --color-surface-container:          #E8E9F8;
+      --color-surface-container-high:     #DEE0F4;
+      --color-surface-container-highest:  #D3D5EE;
+      /* === 文字 === */
+      --color-on-surface:           #1F2433;
+      --color-on-surface-variant:   #6B7294;
+      /* === 功能色 === */
+      --color-success:  #55C59D;
+      --color-error:    #EF4444;
+      --color-warning:  #FFD166;
+      /* === 边框 === */
+      --color-outline:          #C8CBE0;
+      --color-outline-variant:  #DDDFF0;
+      /* === 强调色 === */
+      --color-accent-yellow:  #FFD166;
+      --color-accent-pink:    #FF7AB6;
+      --color-accent-green:   #55C59D;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.08);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.10);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.15);
+      /* === 字体 === */
+      --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段 -->
+  <header class="bg-surface sticky top-0 z-40 h-16 flex items-center justify-between px-6 shadow-card">
+    <div class="max-w-6xl mx-auto w-full flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="graduation-cap" class="text-primary w-6 h-6"></i>
+        <span class="font-bold text-lg text-on-surface">课程预约</span>
+      </div>
+      <nav class="flex items-center gap-1">
+        <a href="home.html" class="px-3 py-1.5 text-sm font-medium text-primary bg-primary/10 rounded-md" aria-current="page">首页</a>
+        <a href="booking.html" class="px-3 py-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">预约试听</a>
+        <a href="admin.html" class="px-3 py-1.5 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors">管理后台</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-semibold">初</div>
+      </div>
+    </div>
+  </header>
+  <!-- @nav:end 导航组件，不需要的页面则不要复制此段 -->
+
+  <!-- @main-content:start -->
+  <main class="max-w-6xl mx-auto px-6 py-8">
+
+    <!-- Hero 区域 -->
+    <section id="hero-section" class="text-center py-16 px-4">
+      <h1 class="text-4xl font-bold text-on-surface leading-tight">发现你的兴趣，预约试听课程</h1>
+      <p class="mt-4 text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">汇聚优质师资与多元课程，零门槛免费试听。轻松找到适合孩子的兴趣方向，让学习从快乐出发。</p>
+      <div class="mt-8">
+        <a href="booking.html" id="btn-hero-cta" class="bg-primary text-on-primary px-8 py-3 rounded-lg text-base font-semibold hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2 shadow-float">
+          <i data-lucide="calendar-check" class="w-5 h-5"></i>
+          立即预约试听
+        </a>
+      </div>
+    </section>
+
+    <!-- 热门课程展示区 -->
+    <section id="popular-courses-section" class="py-12">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl font-bold text-on-surface">热门课程</h2>
+        <p class="mt-2 text-sm text-on-surface-variant">精选优质课程，为孩子开启兴趣之旅</p>
+      </div>
+      <div id="course-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <!-- 列表-课程卡片1：钢琴课 -->
+        <div id="course-card-1" class="bg-surface rounded-xl shadow-card p-5 hover:-translate-y-1 hover:shadow-float transition-all cursor-pointer group">
+          <div class="w-full h-36 rounded-lg bg-surface-container-lowest overflow-hidden mb-4">
+            <img src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0" alt="钢琴课教学场景" data-category="艺术" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-yellow/20 text-accent-yellow">热门</span>
+            <span class="text-xs text-on-surface-variant">4-12岁</span>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">钢琴启蒙课</h3>
+          <p class="text-xs text-on-surface-variant mt-1">从零开始培养音乐感知力，专业教师一对一指导</p>
+          <div class="flex items-center gap-2 mt-3">
+            <div class="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] font-semibold">陈</div>
+            <span class="text-xs text-on-surface-variant">陈老师 · 8年教龄</span>
+          </div>
+        </div>
+
+        <!-- 列表-课程卡片2：美术课 -->
+        <div id="course-card-2" class="bg-surface rounded-xl shadow-card p-5 hover:-translate-y-1 hover:shadow-float transition-all cursor-pointer group">
+          <div class="w-full h-36 rounded-lg bg-surface-container-lowest overflow-hidden mb-4">
+            <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f" alt="美术课绘画场景" data-category="艺术" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-pink/20 text-accent-pink">新课</span>
+            <span class="text-xs text-on-surface-variant">3-10岁</span>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">创意美术课</h3>
+          <p class="text-xs text-on-surface-variant mt-1">激发想象力与创造力，水彩/素描/手工多元体验</p>
+          <div class="flex items-center gap-2 mt-3">
+            <div class="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] font-semibold">林</div>
+            <span class="text-xs text-on-surface-variant">林老师 · 6年教龄</span>
+          </div>
+        </div>
+
+        <!-- 列表-课程卡片3：编程课 -->
+        <div id="course-card-3" class="bg-surface rounded-xl shadow-card p-5 hover:-translate-y-1 hover:shadow-float transition-all cursor-pointer group">
+          <div class="w-full h-36 rounded-lg bg-surface-container-lowest overflow-hidden mb-4">
+            <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e" alt="少儿编程课堂" data-category="商业科技" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-green/20 text-accent-green">热门</span>
+            <span class="text-xs text-on-surface-variant">6-15岁</span>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">趣味编程课</h3>
+          <p class="text-xs text-on-surface-variant mt-1">Scratch/Python启蒙，培养逻辑思维与问题解决能力</p>
+          <div class="flex items-center gap-2 mt-3">
+            <div class="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] font-semibold">王</div>
+            <span class="text-xs text-on-surface-variant">王老师 · 10年教龄</span>
+          </div>
+        </div>
+
+        <!-- 列表-课程卡片4：英语课 -->
+        <div id="course-card-4" class="bg-surface rounded-xl shadow-card p-5 hover:-translate-y-1 hover:shadow-float transition-all cursor-pointer group">
+          <div class="w-full h-36 rounded-lg bg-surface-container-lowest overflow-hidden mb-4">
+            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7" alt="英语课堂互动场景" data-category="人物" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium bg-accent-yellow/20 text-accent-yellow">新课</span>
+            <span class="text-xs text-on-surface-variant">4-12岁</span>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">沉浸式英语课</h3>
+          <p class="text-xs text-on-surface-variant mt-1">全英文互动教学，自然拼读+情景对话轻松开口</p>
+          <div class="flex items-center gap-2 mt-3">
+            <div class="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-[10px] font-semibold">Sarah</div>
+            <span class="text-xs text-on-surface-variant">Sarah老师 · 5年教龄</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 课程预约流程说明区 -->
+    <section id="booking-steps-section" class="py-12">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl font-bold text-on-surface">预约流程</h2>
+        <p class="mt-2 text-sm text-on-surface-variant">三步轻松完成试听预约</p>
+      </div>
+      <div id="steps-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- 流程步骤1：选择课程 -->
+        <div id="step-1" class="bg-surface rounded-xl shadow-card p-6 text-center relative">
+          <div class="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="search" class="w-7 h-7"></i>
+          </div>
+          <div class="absolute -top-3 -left-3 w-8 h-8 bg-primary text-on-primary rounded-full flex items-center justify-center text-sm font-bold shadow-card">1</div>
+          <h3 class="text-base font-semibold text-on-surface">选择课程</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">浏览丰富的课程列表，找到孩子感兴趣的方向</p>
+        </div>
+
+        <!-- 流程步骤2：选择时段 -->
+        <div id="step-2" class="bg-surface rounded-xl shadow-card p-6 text-center relative">
+          <div class="w-14 h-14 bg-accent-green/10 text-accent-green rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="clock" class="w-7 h-7"></i>
+          </div>
+          <div class="absolute -top-3 -left-3 w-8 h-8 bg-accent-green text-on-primary rounded-full flex items-center justify-center text-sm font-bold shadow-card">2</div>
+          <h3 class="text-base font-semibold text-on-surface">选择时段</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">灵活选择上课时间，支持周末和工作日多种时段</p>
+        </div>
+
+        <!-- 流程步骤3：预约成功 -->
+        <div id="step-3" class="bg-surface rounded-xl shadow-card p-6 text-center relative">
+          <div class="w-14 h-14 bg-accent-pink/10 text-accent-pink rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="check-circle" class="w-7 h-7"></i>
+          </div>
+          <div class="absolute -top-3 -left-3 w-8 h-8 bg-accent-pink text-on-primary rounded-full flex items-center justify-center text-sm font-bold shadow-card">3</div>
+          <h3 class="text-base font-semibold text-on-surface">预约成功</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">确认预约信息，按时到店试听，开启学习之旅</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 平台优势区 -->
+    <section id="advantages-section" class="py-12">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl font-bold text-on-surface">为什么选择我们</h2>
+        <p class="mt-2 text-sm text-on-surface-variant">四大优势，让每一次学习都值得信赖</p>
+      </div>
+      <div id="advantage-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <!-- 优势1：专业师资 -->
+        <div id="advantage-1" class="bg-surface rounded-xl shadow-card p-6 text-center">
+          <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="award" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">专业师资</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">所有教师均持有专业资质认证，平均教龄5年以上</p>
+        </div>
+
+        <!-- 优势2：灵活时段 -->
+        <div id="advantage-2" class="bg-surface rounded-xl shadow-card p-6 text-center">
+          <div class="w-12 h-12 bg-accent-green/10 text-accent-green rounded-xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="calendar-range" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">灵活时段</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">工作日、周末全天可选，支持调课与补课安排</p>
+        </div>
+
+        <!-- 优势3：免费试听 -->
+        <div id="advantage-3" class="bg-surface rounded-xl shadow-card p-6 text-center">
+          <div class="w-12 h-12 bg-accent-yellow/10 text-accent-yellow rounded-xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="gift" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">免费试听</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">所有课程均提供免费试听体验，满意后再报名</p>
+        </div>
+
+        <!-- 优势4：小班教学 -->
+        <div id="advantage-4" class="bg-surface rounded-xl shadow-card p-6 text-center">
+          <div class="w-12 h-12 bg-accent-pink/10 text-accent-pink rounded-xl flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-semibold text-on-surface">小班教学</h3>
+          <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">每班不超过6人，确保每位学员获得充分关注</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 底部 CTA 区域 -->
+    <section id="bottom-cta-section" class="py-12">
+      <div class="bg-primary/5 rounded-2xl p-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-accent-yellow/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+        <h2 class="text-2xl font-bold text-on-surface relative z-10">准备好开始了吗？</h2>
+        <p class="mt-3 text-on-surface-variant relative z-10">免费试听，零风险体验。今天就为孩子预约第一堂兴趣课吧！</p>
+        <div class="mt-6 relative z-10">
+          <a href="booking.html" id="btn-bottom-cta" class="bg-primary text-on-primary px-8 py-3 rounded-lg text-base font-semibold hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2">
+            <i data-lucide="calendar-check" class="w-5 h-5"></i>
+            立即预约试听
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <!-- @main-content:end -->
+
+  <script>
+    $(function () {
+      // 课程卡片点击 - 跳转到预约页面并携带课程参数
+      $('#course-cards').on('click', '.course-card-link', function () {
+        const courseId = $(this).data('course-id');
+        window.location.href = 'booking.html?course=' + courseId;
+      });
+    });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

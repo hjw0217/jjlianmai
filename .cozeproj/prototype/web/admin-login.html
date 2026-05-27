@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 === */
+      --color-primary:              #5B6CFF;
+      --color-primary-container:    #E0E3FF;
+      --color-on-primary:           #FFFFFF;
+      /* === 背景 / 表面 === */
+      --color-background:                 #F7F8FF;
+      --color-surface-container-lowest:   #F0F1FB;
+      --color-surface:                    #FFFFFF;
+      --color-surface-container:          #E8E9F8;
+      --color-surface-container-high:     #DEE0F4;
+      --color-surface-container-highest:  #D3D5EE;
+      /* === 文字 === */
+      --color-on-surface:           #1F2433;
+      --color-on-surface-variant:   #6B7294;
+      /* === 功能色 === */
+      --color-success:  #55C59D;
+      --color-error:    #EF4444;
+      --color-warning:  #FFD166;
+      /* === 边框 === */
+      --color-outline:          #C8CBE0;
+      --color-outline-variant:  #DDDFF0;
+      /* === 强调色 === */
+      --color-accent-yellow:  #FFD166;
+      --color-accent-pink:    #FF7AB6;
+      --color-accent-green:   #55C59D;
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.5rem;
+      --radius-lg:   0.75rem;
+      --radius-xl:   1rem;
+      --radius-2xl:  1.5rem;
+      --radius-full: 9999px;
+      /* === 阴影 === */
+      --shadow-card:   0 2px 8px rgba(0,0,0,0.08);
+      --shadow-float:  0 10px 25px rgba(0,0,0,0.10);
+      --shadow-dialog: 0 25px 50px rgba(0,0,0,0.15);
+      /* === 字体 === */
+      --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen flex items-center justify-center relative overflow-hidden">
+
+  <!-- 背景装饰色块 -->
+  <div class="absolute top-[-10%] left-[-5%] w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-[-8%] right-[-3%] w-80 h-80 bg-accent-pink/5 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute top-[30%] right-[10%] w-48 h-48 bg-accent-yellow/5 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-[20%] left-[8%] w-56 h-56 bg-primary/3 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- @main-content:start -->
+  <main class="w-full max-w-sm mx-auto px-6 relative z-10">
+    <!-- 登录卡片 -->
+    <div class="bg-surface rounded-xl shadow-card p-8">
+      <!-- 顶部图标和标题 -->
+      <div class="flex flex-col items-center gap-3 mb-8">
+        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center">
+          <i data-lucide="graduation-cap" class="w-7 h-7 text-primary"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-on-surface">管理后台登录</h1>
+      </div>
+
+      <!-- 登录表单 -->
+      <form id="login-form" class="space-y-5">
+        <!-- 用户名输入框 -->
+        <div class="space-y-1.5">
+          <label for="input-username" class="text-sm font-medium text-on-surface">用户名</label>
+          <input id="input-username" type="text" placeholder="请输入管理员账号"
+                 class="w-full bg-surface-container border-none rounded-lg px-3 py-2.5 text-sm
+                        text-on-surface placeholder:text-on-surface-variant/50
+                        focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+        </div>
+
+        <!-- 密码输入框 -->
+        <div class="space-y-1.5">
+          <label for="input-password" class="text-sm font-medium text-on-surface">密码</label>
+          <input id="input-password" type="password" placeholder="请输入密码"
+                 class="w-full bg-surface-container border-none rounded-lg px-3 py-2.5 text-sm
+                        text-on-surface placeholder:text-on-surface-variant/50
+                        focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors" />
+        </div>
+
+        <!-- 记住我复选框 -->
+        <div class="flex items-center gap-2">
+          <input id="checkbox-remember" type="checkbox"
+                 class="w-4 h-4 rounded border-outline-variant bg-surface-container text-primary
+                        focus:ring-2 focus:ring-primary/30 cursor-pointer accent-primary" />
+          <label for="checkbox-remember" class="text-sm text-on-surface-variant cursor-pointer select-none">记住我</label>
+        </div>
+
+        <!-- 登录按钮 -->
+        <button id="btn-login" type="submit"
+                class="w-full bg-primary text-on-primary py-2.5 rounded-lg text-sm font-semibold
+                       hover:opacity-90 active:scale-[0.98] transition-all">
+          登录
+        </button>
+      </form>
+
+      <!-- 底部提示文字 -->
+      <p class="text-center text-xs text-on-surface-variant/60 mt-6">仅限管理员访问</p>
+    </div>
+  </main>
+  <!-- @main-content:end -->
+
+  <script>
+    $(function () {
+      // 登录表单提交 - demo项目不判断账密，直接跳转到管理后台
+      $('#login-form').on('submit', function (e) {
+        e.preventDefault();
+        window.location.href = 'admin.html';
+      });
+
+      // 登录按钮点击（兼容非submit场景）
+      $('#btn-login').on('click', function (e) {
+        e.preventDefault();
+        window.location.href = 'admin.html';
+      });
+    });
+  </script>
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>
