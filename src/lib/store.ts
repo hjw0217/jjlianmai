@@ -223,18 +223,27 @@ export async function createBooking(params: {
   const slotStart = new Date(`${slot.date}T${slot.start_time}:00`);
   if (now >= slotStart) throw new Error('该时段已开始，无法预约');
 
-  // Check monthly booking limit: two bookings per phone per month
-  const [sy, sm] = slot.date.split('-').map(Number);
-  const monthStart = `${sy}-${String(sm).padStart(2, '0')}-01`;
-  const nextMonth = sm === 12 ? `${sy + 1}-01-01` : `${sy}-${String(sm + 1).padStart(2, '0')}-01`;
+  // Check weekly booking limit: two bookings per phone per week
+  const slotDate = new Date(slot.date);
+  const dayOfWeek = slotDate.getDay(); // 0 = Sunday, 1 = Monday, ...
+  
+  // Calculate week start (Monday) and week end (next Monday)
+  const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const weekStart = new Date(slotDate);
+  weekStart.setDate(slotDate.getDate() - daysToMonday);
+  const weekStartStr = weekStart.toISOString().slice(0, 10);
+  
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 7);
+  const weekEndStr = weekEnd.toISOString().slice(0, 10);
 
-  const monthlyBookings = await client.execute({
+  const weeklyBookings = await client.execute({
     sql: `SELECT id FROM bookings WHERE phone = ? AND status = 'confirmed' AND date >= ? AND date < ?`,
-    args: [params.phone, monthStart, nextMonth],
+    args: [params.phone, weekStartStr, weekEndStr],
   });
 
-  if (monthlyBookings.rows.length >= 2) {
-    throw new Error('该手机号本月预约已达上限，每人每月限预约两次');
+  if (weeklyBookings.rows.length >= 2) {
+    throw new Error('该手机号本周预约已达上限，每人每周限预约两次');
   }
 
   // Check if this phone has already booked this time slot
